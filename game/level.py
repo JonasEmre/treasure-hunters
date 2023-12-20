@@ -9,6 +9,8 @@ class Level():
         self.display_surface = surface
         self.layout = self.setup_layout(level_data)
 
+        self.x_shift = 0
+
     def setup_layout(self, layout):
         # Sprite Groups
         self.tiles = pygame.sprite.Group()
@@ -25,8 +27,32 @@ class Level():
                     player = Player((x, y))
                     self.player.add(player)
 
+    def scroll_x(self):
+        player = self.player.sprite
+        direction_x = player.direction.x
+        player_x = player.rect.centerx
 
-    def run(self, x_shift):
-        self.tiles.update(x_shift)
+        if player_x < int(WIDTH * 0.2) and direction_x < 0:
+            self.x_shift = player.speed
+            player.movement_speed = 0
+        elif player_x > int(WIDTH * 0.8) and direction_x > 0:
+            self.x_shift = -player.speed
+            player.movement_speed = 0
+        else:
+            self.x_shift = 0
+            player.movement_speed = player.speed
+
+
+    def run(self):
+        # Environment tiles
+        self.tiles.update(self.x_shift)
         self.tiles.draw(self.display_surface)
+
+        # Player
+        self.scroll_x()
+        self.player.update()
         self.player.draw(self.display_surface)
+        if self.player.sprite.direction != 0:
+            self.player.sprite.check_collision(self.tiles)
+
+        # Collisions

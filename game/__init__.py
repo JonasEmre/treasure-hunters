@@ -19,7 +19,6 @@ class Game():
 
         # World Setup
         self.level = Level(level_data, self.screen)
-        self.x_shift = 0
 
     def run(self):
         while self.start:
@@ -29,7 +28,7 @@ class Game():
                     sys.exit()
 
             self.screen.fill('black')
-            self.level.run(self.x_shift)
+            self.level.run()
 
             pygame.display.update()
             self.clock.tick(FPS)
